@@ -1,11 +1,20 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:practice_7/auth.dart';
+import 'package:practice_7/shared_preferences.dart';
 import 'package:practice_7/translations/codegen_loader.g.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await EasyLocalization.ensureInitialized();
+
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
+  await sharedPreference.init();
 
   runApp(
     EasyLocalization(

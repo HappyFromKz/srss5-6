@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:practice_7/news/news_bloc.dart';
 import 'package:practice_7/news/news_repository.dart';
+import 'package:practice_7/shared_preferences.dart';
 import 'package:practice_7/user.dart';
 
 // ignore: must_be_immutable
@@ -99,7 +100,7 @@ class UserPage extends StatelessWidget {
               leading: Icon(Icons.phone, size: 30,),
             ),
             ListTile(
-              title: Text('${user.email}', style: TextStyle(fontSize: 20),),
+              title: Text('${sharedPreference.email}', style: TextStyle(fontSize: 20),),
               leading: Icon(Icons.email, size: 30,),
             ),
             ListTile(
@@ -165,9 +166,15 @@ class _NewsPageState extends State<NewsPage> {
               body: ListView.builder(
                 itemCount: state.posts.length,
                 itemBuilder: (context, index) {
-                  return OutlinedCard(
-                    title: state.posts[index].title,
-                    body: state.posts[index].body,
+                  return Padding(
+                    padding: const EdgeInsets.all(10),
+                    child: Column(
+                      children: [
+                        Text(state.posts[index].title, style: TextStyle(fontSize: 18, color: Colors.red),),
+                        SizedBox(height: 10,),
+                        Text(state.posts[index].body, style: TextStyle(fontSize: 16),),
+                      ],
+                    ),
                   );
                 },
               ),
@@ -193,42 +200,6 @@ class _NewsPageState extends State<NewsPage> {
           }
           return Container();
         },
-      ),
-    );
-  }
-}
-
-class OutlinedCard extends StatelessWidget {
-  final String title;
-  final String body;
-
-  const OutlinedCard({Key? key, required this.title, required this.body})
-      : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    final titleTextStyle = TextStyle(fontWeight: FontWeight.w700);
-
-    return Center(
-      child: Card(
-        elevation: 0,
-        shape: RoundedRectangleBorder(
-          side: BorderSide(
-            color: Theme.of(context).colorScheme.onSurface,
-          ),
-          borderRadius: const BorderRadius.all(Radius.circular(12)),
-        ),
-        child: SizedBox(
-          child: Column(
-            children: [
-              Text(
-                title,
-                style: titleTextStyle,
-              ),
-              Text(body),
-            ],
-          ),
-        ),
       ),
     );
   }

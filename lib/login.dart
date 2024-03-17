@@ -1,7 +1,9 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:practice_7/constants.dart';
 import 'package:practice_7/home.dart';
+import 'package:practice_7/login/bloc/login_bloc.dart';
 import 'package:practice_7/translations/locale_keys.g.dart';
 import 'package:practice_7/user.dart';
 
@@ -51,7 +53,7 @@ class _LoginPageState extends State<LoginPage> {
     if (input.isEmpty){
       return LocaleKeys.passwordErrorIsEmpty.tr();
     }
-    if (input.length <= 8){
+    if (input.length < 8){
       return LocaleKeys.passwordErrorLenght.tr();
     }
     return null;
@@ -75,7 +77,36 @@ class _LoginPageState extends State<LoginPage> {
   //interface
   @override
   Widget build(BuildContext context) {
-
+    return BlocProvider(
+      create: (context) => LoginBloc(),
+      child: BlocConsumer<LoginBloc, LoginState>(
+      listener: (BuildContext context, LoginState state) {  
+      if(state is LoginSuccess){
+        Navigator.push(context, 
+          MaterialPageRoute(builder: (context){
+            return HomePage(user: NewUser(
+              fullname: 'Жунусова Дана',
+              phone: "87473738747",
+              email: _emailController.text,
+              lifeStory: "аовыфлдоалжвыофлаолвыдожад ыФВЛДАОЛЫВОЖФАОВЛЫФЖОАЛДЖФЫ",
+              country: 'Казахстан',
+            ));
+          })
+        );
+      }
+    }, 
+    builder: (BuildContext context, LoginState state) { 
+      if(state is LoginLoading){
+        return const Center(
+          child: SizedBox(
+            width: 60,
+            height: 60,
+            child: CircularProgressIndicator(
+              strokeWidth: 4,
+            )
+          )
+        );
+      }
       return Container(
         margin: EdgeInsets.symmetric(vertical: 30),
         color: Colors.white,
@@ -181,17 +212,7 @@ class _LoginPageState extends State<LoginPage> {
                         ElevatedButton(
                           onPressed: (){
                             if (_formKey.currentState!.validate()){
-                              Navigator.push(context, 
-                                MaterialPageRoute(builder: (context){
-                                  return HomePage(user: NewUser(
-                                    fullname: 'Жунусова Дана',
-                                    phone: "87473738747",
-                                    email: _emailController.text,
-                                    lifeStory: "аовыфлдоалжвыофлаолвыдожад ыФВЛДАОЛЫВОЖФАОВЛЫФЖОАЛДЖФЫ",
-                                    country: 'Казахстан',
-                                  ));
-                                })
-                              );
+                              BlocProvider.of<LoginBloc>(context).add(LoginButtonPressed(_emailController.text, _passwordController.text));
                             }
                           }, 
                           child: Text(LocaleKeys.submit.tr(), style: Constants.textStyle)
@@ -205,5 +226,9 @@ class _LoginPageState extends State<LoginPage> {
         ),
       ),
       );
-    }
+      
+    },
+      ),
+      );
   }
+}
